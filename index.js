@@ -15,6 +15,42 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
 /* *********** YOUR CODE HERE *********** */
+const {
+  AUTH0_SECRET,
+  AUTH0_AUDIENCE,
+  AUTH0_CLIENT_ID,
+  AUTH0_BASE_URL,
+  } = process.env;
+  
+const { auth } = require('express-openid-connect');
+
+const config = {
+  authRequired: true,
+  auth0Logout: true,
+  secret: AUTH0_SECRET,
+  baseURL: AUTH0_AUDIENCE,
+  clientID: AUTH0_CLIENT_ID,
+  issuerBaseURL: AUTH0_BASE_URL
+};
+
+// auth router attaches /login, /logout, and /callback routes to the baseURL
+app.use(auth(config));
+
+// req.isAuthenticated is provided from the auth router
+app.get('/', (req, res) => {
+  const userdata = req.oidc.user
+  console.log(userdata)
+  const html = `
+  <div>
+    <h1>CryptoCupcakesAPI</h1>
+    <h2>Welcome ${userdata.name}</h2>
+    <h4>Username:${userdata.nickname}</h4>
+    <img src=${userdata.picture} alt='user picture'>
+  </div>`
+  res.send(html)
+  res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
+});
+
 // follow the module instructions: destructure config environment variables from process.env
 // follow the docs:
   // define the config object
