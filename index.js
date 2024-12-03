@@ -47,8 +47,7 @@ app.get('/', (req, res) => {
     <h4>Username:${userdata.nickname}</h4>
     <img src=${userdata.picture} alt='user picture'>
   </div>`
-  res.send(html)
-  res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
+  res.send(req.oidc.isAuthenticated() ?   html : 'Logged out');
 });
 
 // follow the module instructions: destructure config environment variables from process.env
